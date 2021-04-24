@@ -5,10 +5,10 @@
 unsigned char P[n][n]={0};//representation of P-layer over F_2, an n*n matrix
 int main()
 {
-	unsigned int Lambda(unsigned char P[n][n]);//calculate the number of rounds that can propagate any nonzero input pattern to an all-one pattern, return it.
+	unsigned int ExpansionIndex(unsigned char P[n][n]);//calculate the number of rounds that can propagate any nonzero input pattern to an all-one pattern, return it.
 	void Midori128();//generate the P[][] of the P-layer of Midori128
 	Midori128();//take Midori128 as an example
-	printf("For Midori128, %d rounds can propagate any nonzero input pattern to an all-one output pattern.\n",Lambda(P));
+	printf("For Midori128, %d rounds can propagate any nonzero input pattern to an all-one output pattern.\n",ExpansionIndex(P));
 	return 1;
 }
 void Midori128()
@@ -59,7 +59,7 @@ void Midori128()
 		s[i]=0;
 	}
 }
-unsigned int Lambda(unsigned char P[n][n])
+unsigned int ExpansionIndex(unsigned char P[n][n])
 {
 	/* calculate the number of rounds that can propagate any nonzero input pattern to an all-one pattern, return it.
 	*/
@@ -92,7 +92,7 @@ unsigned int PatternExpansion_improved(unsigned char P[n][n],unsigned char a[t],
 	/*P must be invertible!
 	Calculate a possible heavier output pattern b for input pattern a after the P matrix, and return the hamming weight of b
 	*/
-	unsigned int Block_rank_P(unsigned char P[n][n],unsigned char a[t],unsigned int Rset[]);
+	unsigned int FindSpecialMLIS(unsigned char P[n][n],unsigned char a[t],unsigned int Rset[]);
 	unsigned int Block_rank_Pa(unsigned char Pa[n][n],unsigned int num_col,unsigned int Rset[]);
 	unsigned int add(unsigned char Pa[n][n],unsigned int wa,unsigned int Rset[],unsigned char b[t]);
 	//unsigned char Pr[n][n]={0};//reduced matrix by input pattern 'a' and free variables
@@ -105,7 +105,7 @@ unsigned int PatternExpansion_improved(unsigned char P[n][n],unsigned char a[t],
 	unsigned int wa=0,wb;
 	for(i=0;i<t;i++) wa=wa+a[i],b[i]=0;
 	//get the block_rank of Pa "rank" and maximal independent set "Rset[]"
-	wb=Block_rank_P(P,a,Rset);
+	wb=FindSpecialMLIS(P,a,Rset);
 	//only when wa>1, need free variables:?. No! for retain "non-reduce of patterns" when wa=1 to wa>1, for any wa!=0, we use wa free variables!
 	//get the index set of free variables, there maybe exist better choice of free variables...
 	for(j=0;j<n;j++) {if((j%m!=m-1)&&a[j/m]) free[j]=1;}
@@ -233,7 +233,7 @@ next_u:							u++;
 next_column:j++;
 	}
 }
-unsigned int Block_rank_P(unsigned char P[n][n],unsigned char a[t],unsigned int Rset[])
+unsigned int FindSpecialMLIS(unsigned char P[n][n],unsigned char a[t],unsigned int Rset[])
 {
 	/* P must be invertible!
 	Choosing the columnblocks of P by the pattern a, and get Pa[][];
